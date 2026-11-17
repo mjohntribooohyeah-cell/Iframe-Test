@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>MegaPlay IFrame Tester</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #101010;
+      color: #f5f5f5;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      background: radial-gradient(ellipse at top, #292020 0, #101010 38rem);
+    }
+
+    header {
+      border-bottom: 1px solid #ffffff18;
+      background: #101010d9;
+    }
+
+    .header-inner, main {
+      width: min(100% - 32px, 1440px);
+      margin: 0 auto;
+    }
+
+    .header-inner {
+      display: flex;
+      min-height: 68px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      color: #ef4444;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: .2em;
+    }
+
+    .brand-mark {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 18px #ef444488;
+    }
+
+    main { padding: 48px 0 64px; }
+
+    .intro { margin-bottom: 28px; }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #f87171;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 900;
+      letter-spacing: -.04em;
+    }
+
+    .intro p:last-child {
+      max-width: 680px;
+      margin: 12px 0 0;
+      color: #a3a3a3;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .panel {
+      border: 1px solid #ffffff16;
+      border-radius: 12px;
+      background: #191919e8;
+      box-shadow: 0 24px 70px #0005;
+    }
+
+    .form-panel { padding: 20px; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: #bdbdbd;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid #414141;
+      border-radius: 6px;
+      padding: 10px 12px;
+      background: #202020;
+      color: #fff;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus, button:focus-visible {
+      outline: 2px solid #f87171;
+      outline-offset: 2px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      background: #e11d2e;
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    button:hover { background: #f12d3d; }
+
+    button.secondary {
+      border: 1px solid #414141;
+      background: #303030;
+    }
+
+    button.secondary:hover { background: #404040; }
+
+    .player-panel { margin-top: 16px; overflow: hidden; }
+
+    .player-heading {
+      display: flex;
+      min-height: 54px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #ffffff14;
+    }
+
+    .player-heading strong { font-size: 13px; }
+    .player-heading span { color: #888; font-size: 11px; }
+
+    .player-container {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at center, #202020 0, #080808 70%);
+    }
+
+    .placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      gap: 10px;
+      padding: 20px;
+      color: #888;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .placeholder strong { color: #cfcfcf; }
+
+    .player-container iframe {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #000;
+    }
+
+    .diagnostics {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .diagnostic-card { min-width: 0; padding: 16px; }
+
+    .diagnostic-card h2 {
+      margin: 0 0 12px;
+      color: #cfcfcf;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .url {
+      display: block;
+      min-height: 38px;
+      overflow-wrap: anywhere;
+      color: #fca5a5;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .event-status {
+      min-height: 38px;
+      color: #d4d4d4;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .event-status[data-state="error"] { color: #fca5a5; }
+    .event-status[data-state="load"] { color: #86efac; }
+
+    .note {
+      margin: 16px 0 0;
+      border-left: 3px solid #d97706;
+      padding: 11px 13px;
+      background: #f59e0b0d;
+      color: #d6c6a5;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+      main { padding-top: 32px; }
+      .controls { grid-template-columns: minmax(0, 1fr); }
+      .actions { justify-content: flex-start; }
+      .actions button { flex: 1; }
+      .diagnostics { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 420px) {
+      .header-inner, main { width: min(100% - 24px, 1440px); }
+      .form-panel { padding: 14px; }
+      .controls { gap: 10px; }
+      .player-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .diagnostic-card { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand">POPCORN</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="pageTitle">
+      <p class="eyebrow">Standalone embed diagnostic</p>
+      <h1 id="pageTitle">IFrame Tester</h1>
+      <p>Render a URL directly in a responsive iframe. This page does not proxy requests, inspect the embedded page, or extract media streams.</p>
+    </section>
+
+    <section class="panel form-panel" aria-label="Player settings">
+      <form id="playerForm" class="controls">
+        <label for="targetUrl">URL
+          <input id="targetUrl" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/embed" required>
+        </label>
+        <div class="actions">
+          <button type="submit">Render Iframe</button>
+          <button id="clearPlayer" class="secondary" type="button">Clear Player</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel player-panel" aria-label="MegaPlay iframe">
+      <div class="player-heading">
+        <strong>Iframe</strong>
+        <span id="loadTime">Not loaded</span>
+      </div>
+      <div id="playerContainer" class="player-container">
+        <div id="placeholder" class="placeholder">
+          <strong>No iframe loaded</strong>
+          <span>Enter an absolute HTTP or HTTPS URL, then render the iframe.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="diagnostics" aria-label="Iframe diagnostics">
+      <div class="panel diagnostic-card">
+        <h2>Current URL</h2>
+        <code id="currentUrl" class="url" aria-live="polite">No iframe loaded</code>
+      </div>
+      <div class="panel diagnostic-card">
+        <h2>Iframe event</h2>
+        <p id="eventStatus" class="event-status" role="status" aria-live="polite" data-state="idle">Waiting for a player to load.</p>
+      </div>
+    </section>
+
+    <p class="note">An iframe <code>load</code> event only confirms that a page loaded in the frame. It does not confirm video playback. Cross-origin errors inside an embedded page are not readable here unless that provider documents a messaging API.</p>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const form = document.getElementById('playerForm');
+      const container = document.getElementById('playerContainer');
+      const placeholder = document.getElementById('placeholder');
+      const targetUrl = document.getElementById('targetUrl');
+      const currentUrl = document.getElementById('currentUrl');
+      const eventStatus = document.getElementById('eventStatus');
+      const loadTime = document.getElementById('loadTime');
+
+      function updateAddressBar(url) {
+        const pageUrl = new URL(window.location.href);
+        if (url) pageUrl.searchParams.set('url', url);
+        else pageUrl.searchParams.delete('url');
+        window.history.replaceState(null, '', pageUrl);
+      }
+
+      function renderIframe(url, updateAddress) {
+        let parsed;
+        try {
+          parsed = new URL(url);
+        } catch {
+          eventStatus.textContent = 'Enter a valid absolute URL.';
+          eventStatus.dataset.state = 'error';
+          return;
+        }
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+          eventStatus.textContent = 'Only HTTP and HTTPS URLs can be rendered.';
+          eventStatus.dataset.state = 'error';
+          return;
+        }
+
+        const frame = document.createElement('iframe');
+        frame.setAttribute('src', url);
+        frame.setAttribute('width', '100%');
+        frame.setAttribute('height', '600');
+        frame.setAttribute('frameborder', '0');
+        frame.setAttribute('scrolling', 'no');
+        frame.setAttribute('allowfullscreen', '');
+        frame.title = 'Embedded page';
+        frame.addEventListener('load', () => {
+          if (container.querySelector('iframe') !== frame) return;
+          loadTime.textContent = 'Last load: ' + new Date().toLocaleString();
+          eventStatus.textContent = 'Iframe load event fired. This does not confirm successful playback.';
+          eventStatus.dataset.state = 'load';
+        });
+        frame.addEventListener('error', () => {
+          if (container.querySelector('iframe') !== frame) return;
+          eventStatus.textContent = 'Iframe error event fired. Check browser network or the remote site.';
+          eventStatus.dataset.state = 'error';
+        });
+
+        placeholder.hidden = true;
+        container.replaceChildren(frame);
+        currentUrl.textContent = url;
+        loadTime.textContent = 'Loading…';
+        eventStatus.textContent = 'Loading iframe…';
+        eventStatus.dataset.state = 'idle';
+        if (updateAddress) updateAddressBar(url);
+      }
+
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        renderIframe(targetUrl.value, true);
+      });
+
+      document.getElementById('clearPlayer').addEventListener('click', () => {
+        container.replaceChildren(placeholder);
+        placeholder.hidden = false;
+        currentUrl.textContent = 'No iframe loaded';
+        loadTime.textContent = 'Not loaded';
+        eventStatus.textContent = 'Player cleared.';
+        eventStatus.dataset.state = 'idle';
+        updateAddressBar('');
+      });
+
+      const initialUrl = new URLSearchParams(window.location.search).get('url');
+      targetUrl.value = initialUrl || '';
+      if (initialUrl) renderIframe(initialUrl, false);
+    })();
+  </script>
+</body>
+</html>
